@@ -134,8 +134,63 @@ class FindUnionPractice{
      * row = [0,2,1,3]
      * row = [3,2,0,1]
      * */
-    public int minSwapCouples(int[] row){
+    public int minSwapCouplesI(int[] row){
         int cnt = 0;
+        int[] record = new int[row.length];
+        for(int i = 0;i<row.length;i++){
+            record[row[i]] = i;
+        }
+        for(int i = 0;i<row.length;i++){
+            /**直接使用while循环进行计算 统计 因为
+             * 所有的交换必定在一个circle中 在一个circle中交换
+             * 交换次数有限 所以直接交换 交换注意的是 交换完之后
+             * pair右边的剩余位置必须是偶数个*/
+        }
         return cnt;
+    }
+
+    /**使用并查集计算 最少交换座位的次数*/
+    public int minSwapCouple(int[] row){
+        int n = row.length;
+        int tot = n/2;
+        int[] f = new int[tot];
+        for(int i = 0;i<n;i++){
+            f[i] = i;
+        }
+
+        /**连通图情况统计*/
+        for(int i = 0;i<row.length;i+=2){
+            /**得到left right两个变量*/
+            int left = row[i]/2;
+            int right = row[i+1]/2;
+            add(f,left,right);
+        }
+
+        /**使用map对连通分量进行统计*/
+        HashMap<Integer,Integer> recordMap = new HashMap<Integer,Integer>();
+        for(int i = 0;i<row.length;i++){
+            int xFa = getF(f,row[i]);
+            /**连通分量数目 + 1*/
+            recordMap.put(xFa,recordMap.getOrDefault(xFa,0)+1);
+        }
+
+        int res = 0;
+        for(Map.Entry<Integer,Integer> entry : recordMap.entrySet()){
+            res += (entry.getValue()/2-1);
+        }
+        return res;
+    }
+    public int getF(int[] f,int cur){
+        if(f[cur]==cur){
+            return cur;
+        }
+        /**进一步递归 向上得到其祖先节点*/
+        return getF(f,f[cur]);
+    }
+    public void add(int[] f,int left,int right){
+        int leftFa = getF(f,left);
+        int rightFa = getF(f,right);
+        /**进行连通 直接更改其祖先节点*/
+        f[leftFa] = rightFa;
     }
 }
