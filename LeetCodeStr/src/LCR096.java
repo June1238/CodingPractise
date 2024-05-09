@@ -7,7 +7,7 @@ public class LCR096 {
         System.out.println(var);
     }
     /**交错字符串
-     * 给丁三个字符串 判断s3能不能够由s1和s2交织组成
+     * 给定三个字符串 判断s3能不能够由s1和s2交织组成
      * */
     public static boolean isInterLeave(String s1,String s2,String s3){
         boolean res = false;
