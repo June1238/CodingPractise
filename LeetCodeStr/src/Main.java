@@ -1,12 +1,8 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        partitions("aabaa");
-        System.out.println(minCut("aab"));
+        System.out.println(concatArr(new int[]{3,2,4,6},new int[]{5,7,11}));
     }
 
     /**分割回文串：给定字符串s 将s分割成一些子串 使每个子串都是回文串 返回s
@@ -94,6 +90,91 @@ public class Main {
             }
         }
         return res[len]-1;
+    }
+
+    public static boolean averageNum(int[] arr){
+        int[] recordMap = new int[2];
+        Arrays.fill(recordMap,0);
+        for(int num : arr){
+            if(num % 2 == 0) return true;
+            recordMap[num%4-1] ++;
+        }
+        if(recordMap[0]>=1&&recordMap[2]>=1)
+            return true;
+        return false;
+    }
+
+    public int minimumRefill(int[] plants,int capacityA,int capacityB){
+        int i = 0 , j = plants.length - 1;
+        int ret = 0 , tempCapA = capacityA , tempCapB = capacityB;
+        while(i<j){
+            if(tempCapA<plants[i]){
+                tempCapA  = capacityA;
+                ret ++;
+            }
+            if(tempCapB < plants[j])
+            {
+                tempCapB = capacityB;
+                ret++;
+            }
+            tempCapA -= plants[i];
+            tempCapB -= plants[j];
+            i++;
+            j--;
+        }
+        if(i==j){
+            if(tempCapA < tempCapB){
+                if(tempCapB<plants[i])
+                    ret++;
+            }
+            else{
+                if(tempCapA<plants[i])
+                    ret++;
+            }
+        }
+        return ret;
+    }
+
+    /**讨厌鬼的数组拼接
+     *
+     * 定义一个所有元素互不相等的数组的权值 ： 最大值所在位置的下标 和 最小值所在位置的下标 Diff
+     * 现在有一个长度n互不相等的数组a 以及一个有m个元素的集合s
+     * */
+    public static int concatArr(int[] originArr,int[] addArr){
+        HashSet<Integer> recordSet = new HashSet<>();
+        int minValue = originArr[0] , minIndex = 0;
+        int maxValue = originArr[0] , maxIndex = 0;
+        for(int i = 0;i<originArr.length;i++){
+            recordSet.add(originArr[i]);
+            if(originArr[i] < minValue){
+                minValue = originArr[i];
+                minIndex = i;
+            }
+
+            if(originArr[i] > maxValue){
+                maxValue = originArr[i];
+                maxIndex = i;
+            }
+        }
+        int cnt = 0;
+        int addMinV = Integer.MAX_VALUE , addMaxV = Integer.MIN_VALUE;
+        for(int i = 0;i<addArr.length;i++){
+            if(recordSet.contains(addArr[i])==false){
+                cnt++;
+                recordSet.add(addArr[i]);
+                if(addArr[i]<addMinV) { addMinV = addArr[i]; }
+                if(addArr[i]>addMaxV) { addMaxV = addArr[i]; }
+            }
+        }
+
+        if(addMaxV>maxValue && addMinV<minValue) return recordSet.size() - 1;
+        if(addMaxV<maxValue && addMinV>minValue) return Math.abs(maxIndex-minIndex);
+        int pos = 0;
+        if(maxValue>addMaxV) pos = maxIndex;
+        if(minValue<addMinV) pos = minIndex;
+
+        return cnt + Math.max(pos,originArr.length-pos-1) ;
+
     }
 }
 
